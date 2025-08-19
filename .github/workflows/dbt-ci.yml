@@ -1,0 +1,43 @@
+name: dbt CI (DuckDB)
+
+on:
+  workflow_dispatch: {}         # run manually
+  push:                         # run on pushes to main
+    branches: [main]
+    paths:
+      - "models/**"
+      - "seeds/**"
+      - "macros/**"
+      - "snapshots/**"
+      - "packages.yml"
+      - "dbt_project.yml"
+  pull_request:                 # run on PRs too
+    paths:
+      - "models/**"
+      - "seeds/**"
+      - "macros/**"
+      - "snapshots/**"
+      - "packages.yml"
+      - "dbt_project.yml"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      DBT_PROFILES_DIR: .github/profiles
+      ALLOW_BIGQUERY_RUNS: "TRUE"   # satisfies the on-run-start hook
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dbt + sqlfluff
+        run: |
+          python -m pip install --upgrade pip
+          pip install "dbt-core==1.9.2" "dbt-duckdb==1.9.4" "sqlfluff==3.4.2"
+      - name: dbt deps
+        run: dbt deps
+      - name: Compile project on DuckDB (no data)
+        run: dbt compile --target duckdb
+      - name: Lint SQL
+        run: sqlfluff lint --dialect bigquery .
