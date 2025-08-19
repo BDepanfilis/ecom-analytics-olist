@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Normalized orders with standardized status and keys."
+    columns:
+      - name: order_id
+        description: "Primary key."
+        tests: [unique, not_null]
+      - name: customer_id
+        tests: [not_null]
+      - name: order_status
+        description: "Final status after normalization."
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "approved",
+                  "canceled",
+                  "delivered",
+                  "invoiced",
+                  "processing",
+                  "shipped",
+                  "unavailable",
+                  "created",
+                ]
+
+  - name: stg_order_items
+    description: "One row per order item (SKU level)."
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: order_item_id
+        tests: [not_null]
+      - name: product_id
+        tests: [not_null]
+
+  - name: stg_payments
+    description: "Payments per order transaction."
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: payment_type
+      - name: payment_value
+
+  - name: stg_customers
+    description: "Customer dimension (city/state retained)."
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: stg_products
+    description: "Product attributes and category."
+    columns:
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: stg_sellers
+    description: "Seller (merchant) dimension."
+    columns:
+      - name: seller_id
+        tests: [unique, not_null]
+
+  - name: stg_reviews
+    description: "Order review facts with stars and timestamps."
+    columns:
+      - name: review_id
+        tests: [unique, not_null]
+      - name: order_id
+        tests: [not_null]

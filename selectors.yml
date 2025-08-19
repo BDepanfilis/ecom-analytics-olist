@@ -1,0 +1,9 @@
+selectors:
+  - name: ci
+    description: "Compile everything (no execution)."
+    definition:
+      union:
+        - method: tag
+          value: analytics-olist
+        - method: fqn
+          value: "*"

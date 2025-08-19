@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: mart_sales_daily
+    description: "Daily sales metrics aggregated by order_date"
+    columns:
+      - name: order_date
+        tests: [not_null]
+      - name: revenue
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+      - name: paid_amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: orders
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: aov
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+
+  - name: mart_returns_quality
+    description: "Daily returns & quality metrics by order_date"
+    columns:
+      - name: order_date
+        tests: [not_null]
+      - name: avg_review_score
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 1
+              max_value: 5
+      - name: canceled_orders
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: cancel_rate
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+              max_value: 1
+
+  - name: mart_marketing_roi
+    description: "Daily marketing spend, sessions, and revenue by channel"
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: channel
+        tests:
+          - accepted_values:
+              values: ['Search', 'Social']
+      - name: spend
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: session_count
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: gross_revenue
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+      - name: paid_amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0

@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: olist
+    description: "Raw Olist CSV datasets (one table per file)."
+    database: "{{ target.database if target.type == 'duckdb' else var('bq_project', target.database) }}"
+    schema: "{{ target.schema   if target.type == 'duckdb' else var('bq_dataset', target.schema) }}"
+
+    tables:
+      - name: olist_customers_dataset
+        description: "One row per customer; city/state metadata."
+      - name: olist_geolocation_dataset
+        description: "ZIP code → lat/long grid."
+      - name: olist_orders_dataset
+        description: "One row per order with lifecycle timestamps."
+      - name: olist_order_items_dataset
+        description: "One row per order line (SKU level)."
+      - name: olist_order_payments_dataset
+        description: "Payments per order; one row per transaction."
+      - name: olist_order_reviews_dataset
+        description: "Customer reviews and star ratings per order."
+      - name: olist_products_dataset
+        description: "Product metadata and category."
+      - name: olist_sellers_dataset
+        description: "Seller (merchant) master data."
+      - name: product_category_name_translation
+        description: "Portuguese → English category mapping."

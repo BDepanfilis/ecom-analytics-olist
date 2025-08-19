@@ -1,0 +1,11 @@
+olist:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: olist-469023
+      dataset: analytics_olist
+      threads: 4
+      location: US
+      priority: interactive

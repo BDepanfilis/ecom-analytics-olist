@@ -1,0 +1,50 @@
+version: 2
+
+seeds:
+  - name: marketing_spend_daily
+    columns:
+      - name: date
+        tests:
+          - not_null
+      - name: channel
+        tests:
+          - not_null
+          - accepted_values:
+                values: ['Search', 'Social']
+      - name: spend
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+
+  - name: web_sessions
+    columns:
+      - name: date
+        tests:
+          - not_null
+      - name: session_id
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: medium
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Search', 'Social', 'Other']
+      - name: pages
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+
+              min_value: 0
+
+  - name: product_category_name_translation
+    columns:
+      - name: product_category_name
+        tests:
+          - not_null
+          - unique
+      - name: product_category_name_english
+        tests:
+          - not_null

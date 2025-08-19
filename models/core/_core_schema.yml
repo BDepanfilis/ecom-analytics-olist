@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: "Calendar table. One row per day."
+    columns:
+      - name: date        
+        description: "Primary key for the date dimension."
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_customer
+    description: "Customer dimension."
+    columns:
+      - name: customer_id
+        description: "Primary key."
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_seller
+    description: "Seller dimension."
+    columns:
+      - name: seller_id
+        description: "Primary key."
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_product
+    description: "Product dimension."
+    columns:
+      - name: product_id
+        description: "Primary key."
+        tests:
+          - not_null
+          - unique
+
+  - name: fact_order_lines
+    description: "Line-level facts built from order_items."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_orders')
+              field: order_id
+
+      - name: order_item_id
+        tests:
+          - not_null
+
+      - name: line_price
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+                min_value: 0
+
+      - name: line_freight
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+                min_value: 0
+
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('dim_product')
+              field: product_id
+
+      - name: seller_id
+        tests:
+          - relationships:
+              to: ref('dim_seller')
+              field: seller_id
+
+  - name: fact_orders
+    description: "Order-level facts."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_id
+
+      - name: gross_revenue
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+                min_value: 0
+
+      - name: paid_amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+                min_value: 0

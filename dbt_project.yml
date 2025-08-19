@@ -1,0 +1,32 @@
+name: analytics_olist
+version: "1.0"
+config-version: 2
+
+profile: olist
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+snapshot-paths: ["snapshots"]
+analysis-paths: ["analysis"]
+
+on-run-start:
+  - "{% if target.type == 'bigquery' %}{{ assert_env_allows_bq_runs() }}{% endif %}"
+
+models:
+  analytics_olist:
+    +materialized: view
+    staging:
+      +schema: staging
+      +materialized: view
+    core:
+      +schema: core
+      +materialized: table
+    marts:
+      +schema: marts
+      +materialized: table
+
+seeds:
+  analytics_olist:
+    +schema: seed
